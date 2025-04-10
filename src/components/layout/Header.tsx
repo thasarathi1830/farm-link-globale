@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import MobileNav from './MobileNav';
-import { Plant, Menu } from 'lucide-react';
+import { Sprout, Menu } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ const Header = () => {
       <div className="container flex h-16 items-center justify-between py-4">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
-            <Plant className="h-6 w-6 text-agrilink-green" />
+            <Sprout className="h-6 w-6 text-agrilink-green" />
             <span className="text-xl font-bold text-agrilink-green">AgriLink</span>
           </Link>
         </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
-import { Plant } from 'lucide-react';
+import { Sprout } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -45,12 +44,17 @@ const Login = () => {
     }
   };
 
+  const setDemoAccount = (email: string, password: string) => {
+    form.setValue('email', email);
+    form.setValue('password', password);
+  };
+
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <div className="flex justify-center">
-            <Plant className="h-10 w-10 text-agrilink-green" />
+            <Sprout className="h-10 w-10 text-agrilink-green" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="text-sm text-muted-foreground">
@@ -123,7 +127,7 @@ const Login = () => {
               variant="outline" 
               size="sm" 
               disabled={isLoading}
-              onClick={() => form.setValue('email', 'farmer@example.com') && form.setValue('password', 'password123')}
+              onClick={() => setDemoAccount('farmer@example.com', 'password123')}
             >
               Farmer: farmer@example.com
             </Button>
@@ -131,7 +135,7 @@ const Login = () => {
               variant="outline" 
               size="sm" 
               disabled={isLoading}
-              onClick={() => form.setValue('email', 'landowner@example.com') && form.setValue('password', 'password123')}
+              onClick={() => setDemoAccount('landowner@example.com', 'password123')}
             >
               Landowner: landowner@example.com
             </Button>
@@ -139,7 +143,7 @@ const Login = () => {
               variant="outline" 
               size="sm" 
               disabled={isLoading}
-              onClick={() => form.setValue('email', 'corporate@example.com') && form.setValue('password', 'password123')}
+              onClick={() => setDemoAccount('corporate@example.com', 'password123')}
             >
               Corporate: corporate@example.com
             </Button>

@@ -2,7 +2,7 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Plant } from "lucide-react";
+import { Sprout } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -18,7 +18,7 @@ const NotFound = () => {
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center space-y-6 max-w-md mx-auto px-4">
         <div className="flex justify-center">
-          <Plant className="h-16 w-16 text-agrilink-green opacity-50" />
+          <Sprout className="h-16 w-16 text-agrilink-green opacity-50" />
         </div>
         <h1 className="text-4xl md:text-6xl font-bold text-gray-800">404</h1>
         <h2 className="text-2xl font-semibold text-gray-700">Page Not Found</h2>

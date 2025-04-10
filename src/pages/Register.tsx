@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -16,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAuth, UserRole } from '@/hooks/useAuth';
-import { Plant, Sprout, Users, Building } from 'lucide-react';
+import { Sprout, Users, Building } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
@@ -60,7 +59,7 @@ const Register = () => {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px]">
         <div className="flex flex-col space-y-2 text-center">
           <div className="flex justify-center">
-            <Plant className="h-10 w-10 text-agrilink-green" />
+            <Sprout className="h-10 w-10 text-agrilink-green" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
           <p className="text-sm text-muted-foreground">
