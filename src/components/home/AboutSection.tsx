@@ -15,7 +15,7 @@ const AboutSection = ({ aboutRef }: AboutSectionProps) => {
             About AgriLink
           </h2>
           <p className="text-gray-600 md:text-lg">
-            AgriLink is a digital bridge connecting farmers, landowners, and corporations to enable transparent, fair, and efficient agricultural collaboration. Our mission is to empower farmers, help landowners utilize land effectively, and assist corporations in managing agricultural projects. We provide verified profiles, project dashboards, and smart matching between stakeholders to revolutionize agriculture.
+            AgriLink is a smart agricultural platform connecting Farmers, Landowners, and Corporations. Our goal is to eliminate intermediaries, enable direct collaboration, and empower agricultural stakeholders through technology. With our intelligent matchmaking system and verified user base, we ensure transparency and growth across the agriculture ecosystem.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">

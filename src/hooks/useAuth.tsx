@@ -11,6 +11,7 @@ export interface User {
   email: string;
   role: UserRole;
   phone?: string;
+  photoUrl?: string;
 }
 
 interface AuthContextType {
@@ -20,6 +21,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
   logout: () => void;
+  loginWithGoogle: () => Promise<void>;
+  signupWithGoogle: (role: UserRole) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -121,6 +124,78 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithGoogle = async () => {
+    try {
+      setIsLoading(true);
+      // Simulate Google login
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // In a real app, this would use the Google Identity Services SDK
+      // For demo purposes, we'll create a mock user
+      const mockGoogleUser: User = {
+        id: `google-user-${Date.now()}`,
+        name: "Google User",
+        email: "googleuser@gmail.com",
+        role: 'farmer', // Default role
+        photoUrl: "https://lh3.googleusercontent.com/a/default-user=s120"
+      };
+      
+      setUser(mockGoogleUser);
+      localStorage.setItem('user', JSON.stringify(mockGoogleUser));
+      
+      toast({
+        title: "Google login successful",
+        description: `Welcome, ${mockGoogleUser.name}!`,
+      });
+      
+      navigate('/dashboard');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Google login failed",
+        description: "Failed to log in with Google. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signupWithGoogle = async (role: UserRole) => {
+    try {
+      setIsLoading(true);
+      // Simulate Google signup
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // In a real app, this would use the Google Identity Services SDK
+      // For demo purposes, we'll create a mock user with the provided role
+      const mockGoogleUser: User = {
+        id: `google-user-${Date.now()}`,
+        name: "Google User",
+        email: "googleuser@gmail.com",
+        role: role,
+        photoUrl: "https://lh3.googleusercontent.com/a/default-user=s120"
+      };
+      
+      setUser(mockGoogleUser);
+      localStorage.setItem('user', JSON.stringify(mockGoogleUser));
+      
+      toast({
+        title: "Google signup successful",
+        description: `Welcome to AgriLink, ${mockGoogleUser.name}!`,
+      });
+      
+      navigate('/dashboard');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Google signup failed",
+        description: "Failed to sign up with Google. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -139,7 +214,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         login,
         register,
-        logout
+        logout,
+        loginWithGoogle,
+        signupWithGoogle
       }}
     >
       {children}
