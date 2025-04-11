@@ -6,81 +6,82 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 220 13% 18%; /* Dark Charcoal */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 47 42% 95%; /* Creamy Beige */
+    --card-foreground: 220 13% 18%; /* Dark Charcoal */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 47 42% 95%; /* Creamy Beige */
+    --popover-foreground: 220 13% 18%; /* Dark Charcoal */
 
-    --primary: 106 84% 27%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 122 47% 33%; /* Forest Green */
+    --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 80 55% 50%; /* Soft Olive */
+    --secondary-foreground: 220 13% 18%; /* Dark Charcoal */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 93%; /* Light Grey */
+    --muted-foreground: 220 10% 40%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 43 89% 50%; /* Wheat Yellow */
+    --accent-foreground: 220 13% 18%; /* Dark Charcoal */
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 93%; /* Light Grey */
+    --input: 0 0% 93%; /* Light Grey */
+    --ring: 122 47% 33%; /* Forest Green */
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 47 42% 95%; /* Creamy Beige */
+    --sidebar-foreground: 220 13% 18%; /* Dark Charcoal */
+    --sidebar-primary: 122 47% 33%; /* Forest Green */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 0 0% 93%; /* Light Grey */
+    --sidebar-accent-foreground: 220 13% 18%; /* Dark Charcoal */
+    --sidebar-border: 0 0% 93%; /* Light Grey */
+    --sidebar-ring: 122 47% 33%; /* Forest Green */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 13% 18%; /* Dark Charcoal */
+    --foreground: 0 0% 93%; /* Light Grey */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 13% 18%; /* Dark Charcoal */
+    --card-foreground: 0 0% 93%; /* Light Grey */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 13% 18%; /* Dark Charcoal */
+    --popover-foreground: 0 0% 93%; /* Light Grey */
 
-    --primary: 106 84% 27%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 122 47% 33%; /* Forest Green */
+    --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 80 55% 50%; /* Soft Olive */
+    --secondary-foreground: 220 13% 18%; /* Dark Charcoal */
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 43 89% 50%; /* Wheat Yellow */
+    --accent-foreground: 220 13% 18%; /* Dark Charcoal */
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --ring: 122 47% 33%; /* Forest Green */
+
+    --sidebar-background: 220 13% 18%; /* Dark Charcoal */
+    --sidebar-foreground: 0 0% 93%; /* Light Grey */
+    --sidebar-primary: 122 47% 33%; /* Forest Green */
+    --sidebar-primary-foreground: 0 0% 100%; /* White */
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 0 0% 93%; /* Light Grey */
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 122 47% 33%; /* Forest Green */
   }
 }
 

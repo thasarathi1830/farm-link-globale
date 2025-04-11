@@ -65,14 +65,26 @@ export default {
 				},
                 agrilink: {
                     green: {
-                        DEFAULT: '#4D7C0F',
-                        light: '#65A30D',
+                        DEFAULT: '#2E7D32', // Forest Green
+                        light: '#A4C639', // Soft Olive
                     },
                     brown: {
-                        DEFAULT: '#92400E',
+                        DEFAULT: '#6E4B1F', // Rich Soil Brown
                     },
                     blue: {
-                        DEFAULT: '#0369A1',
+                        DEFAULT: '#87CEEB', // Sky Blue
+                    },
+                    beige: {
+                        DEFAULT: '#F9F5EB', // Creamy Beige
+                    },
+                    yellow: {
+                        DEFAULT: '#F1C40F', // Wheat Yellow
+                    },
+                    charcoal: {
+                        DEFAULT: '#2C2C2C', // Dark Charcoal
+                    },
+                    grey: {
+                        DEFAULT: '#EDEDED', // Light Grey
                     }
                 }
 			},
