@@ -1,10 +1,48 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Sprout, Users, Building, ArrowRight } from 'lucide-react';
+import { Sprout, Users, Building, ArrowRight, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
+
+type UserRole = 'farmer' | 'landowner' | 'corporate';
+
+interface FormData {
+  email: string;
+  role: UserRole;
+}
 
 const Home = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [isAboutExpanded, setIsAboutExpanded] = useState(false);
+  const [isMissionExpanded, setIsMissionExpanded] = useState(false);
+  
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>();
+  
+  const openModal = (role: UserRole) => {
+    setSelectedRole(role);
+    setValue('role', role);
+    setIsModalOpen(true);
+  };
+  
+  const onSubmit = (data: FormData) => {
+    console.log('Form submitted:', data);
+    // Here you would handle form submission (login/register)
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -22,10 +60,51 @@ const Home = () => {
             <Button asChild size="lg">
               <Link to="/register">Get Started</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/about">Learn More</Link>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => setIsAboutExpanded(!isAboutExpanded)}
+              className="flex items-center gap-1"
+            >
+              <Info className="h-4 w-4" />
+              Learn More
+              {isAboutExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </div>
+          
+          {/* Expandable About Section */}
+          {isAboutExpanded && (
+            <div className="w-full max-w-3xl bg-white rounded-lg p-6 shadow-md mt-4 animate-fade-in">
+              <h3 className="text-xl font-bold mb-3">About AgriLink</h3>
+              <p className="text-gray-600 mb-4">
+                AgriLink was founded with a vision to revolutionize agricultural collaboration. Our platform connects all stakeholders in the agricultural ecosystem—farmers, landowners, and corporations—to create synergistic relationships that benefit everyone involved while promoting sustainable farming practices.
+              </p>
+              <div className="flex justify-center">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsMissionExpanded(!isMissionExpanded)}
+                  className="flex items-center gap-1"
+                >
+                  Our Mission & Vision
+                  {isMissionExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </div>
+              
+              {/* Nested Expandable Mission Section */}
+              {isMissionExpanded && (
+                <div className="mt-4 bg-green-50 rounded-lg p-4 animate-fade-in">
+                  <h4 className="font-semibold mb-2">Our Mission</h4>
+                  <p className="text-gray-600 mb-3">
+                    To create a transparent, efficient, and accessible platform that empowers agricultural stakeholders to connect, collaborate, and thrive in a sustainable ecosystem.
+                  </p>
+                  <h4 className="font-semibold mb-2">Our Vision</h4>
+                  <p className="text-gray-600">
+                    A world where agricultural collaboration is seamless, profitable, and environmentally responsible, ensuring food security for future generations.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -51,10 +130,12 @@ const Home = () => {
               <p className="text-gray-600 text-center">
                 Find work opportunities, lease land, showcase your experience, and connect with agricultural corporations.
               </p>
-              <Button asChild variant="link">
-                <Link to="/register" className="flex items-center">
-                  Join as Farmer <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+              <Button 
+                variant="link" 
+                className="flex items-center" 
+                onClick={() => openModal('farmer')}
+              >
+                Join as Farmer <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
             <div className="flex flex-col items-center space-y-4 p-6 bg-green-50 rounded-lg">
@@ -65,10 +146,12 @@ const Home = () => {
               <p className="text-gray-600 text-center">
                 List your land, find reliable farmers, create lease agreements, and maximize your property's potential.
               </p>
-              <Button asChild variant="link">
-                <Link to="/register" className="flex items-center">
-                  Join as Landowner <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+              <Button 
+                variant="link" 
+                className="flex items-center" 
+                onClick={() => openModal('landowner')}
+              >
+                Join as Landowner <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
             <div className="flex flex-col items-center space-y-4 p-6 bg-green-50 rounded-lg">
@@ -79,10 +162,12 @@ const Home = () => {
               <p className="text-gray-600 text-center">
                 Find skilled farmers, lease land, manage agricultural projects, and track performance with powerful analytics.
               </p>
-              <Button asChild variant="link">
-                <Link to="/register" className="flex items-center">
-                  Join as Corporation <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+              <Button 
+                variant="link" 
+                className="flex items-center" 
+                onClick={() => openModal('corporate')}
+              >
+                Join as Corporation <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -103,6 +188,87 @@ const Home = () => {
           </Button>
         </div>
       </section>
+
+      {/* Modal for Login/Register */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Join AgriLink</DialogTitle>
+            <DialogDescription>
+              Enter your email to create an account or sign in
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="your@email.com" 
+                {...register('email', { 
+                  required: 'Email is required', 
+                  pattern: { 
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
+                    message: 'Invalid email address' 
+                  } 
+                })} 
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label>I am a...</Label>
+              <RadioGroup 
+                defaultValue={selectedRole || undefined} 
+                className="flex flex-col space-y-2"
+                {...register('role', { required: 'Please select a role' })}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="farmer" id="farmer" />
+                  <Label htmlFor="farmer" className="flex items-center">
+                    <Sprout className="mr-2 h-4 w-4 text-agrilink-green" />
+                    Farmer
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="landowner" id="landowner" />
+                  <Label htmlFor="landowner" className="flex items-center">
+                    <Users className="mr-2 h-4 w-4 text-agrilink-brown" />
+                    Landowner
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="corporate" id="corporate" />
+                  <Label htmlFor="corporate" className="flex items-center">
+                    <Building className="mr-2 h-4 w-4 text-agrilink-blue" />
+                    Corporation
+                  </Label>
+                </div>
+              </RadioGroup>
+              {errors.role && (
+                <p className="text-sm text-red-500">{errors.role.message}</p>
+              )}
+            </div>
+
+            <DialogFooter className="sm:justify-between flex flex-col sm:flex-row gap-2">
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <div className="flex gap-2">
+                <Button type="submit" variant="outline">
+                  Sign In
+                </Button>
+                <Button type="submit">
+                  Register
+                </Button>
+              </div>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
