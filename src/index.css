@@ -6,81 +6,81 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 220 13% 18%; /* Dark Charcoal */
+    --foreground: 0 0% 17%; /* Dark Charcoal */
 
     --card: 47 42% 95%; /* Creamy Beige */
-    --card-foreground: 220 13% 18%; /* Dark Charcoal */
+    --card-foreground: 0 0% 17%; /* Dark Charcoal */
 
     --popover: 47 42% 95%; /* Creamy Beige */
-    --popover-foreground: 220 13% 18%; /* Dark Charcoal */
+    --popover-foreground: 0 0% 17%; /* Dark Charcoal */
 
-    --primary: 122 47% 33%; /* Forest Green */
+    --primary: 122 47% 33%; /* Forest Green - #2E7D32 */
     --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 80 55% 50%; /* Soft Olive */
-    --secondary-foreground: 220 13% 18%; /* Dark Charcoal */
+    --secondary: 80 55% 50%; /* Soft Olive - #A4C639 */
+    --secondary-foreground: 0 0% 17%; /* Dark Charcoal */
 
-    --muted: 0 0% 93%; /* Light Grey */
-    --muted-foreground: 220 10% 40%;
+    --muted: 0 0% 93%; /* Light Grey - #EDEDED */
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 43 89% 50%; /* Wheat Yellow */
-    --accent-foreground: 220 13% 18%; /* Dark Charcoal */
+    --accent: 43 89% 50%; /* Wheat Yellow - #F1C40F */
+    --accent-foreground: 0 0% 17%; /* Dark Charcoal */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 93%; /* Light Grey */
-    --input: 0 0% 93%; /* Light Grey */
-    --ring: 122 47% 33%; /* Forest Green */
+    --border: 0 0% 93%; /* Light Grey - #EDEDED */
+    --input: 0 0% 93%; /* Light Grey - #EDEDED */
+    --ring: 122 47% 33%; /* Forest Green - #2E7D32 */
 
     --radius: 0.5rem;
 
     --sidebar-background: 47 42% 95%; /* Creamy Beige */
-    --sidebar-foreground: 220 13% 18%; /* Dark Charcoal */
+    --sidebar-foreground: 0 0% 17%; /* Dark Charcoal */
     --sidebar-primary: 122 47% 33%; /* Forest Green */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
     --sidebar-accent: 0 0% 93%; /* Light Grey */
-    --sidebar-accent-foreground: 220 13% 18%; /* Dark Charcoal */
+    --sidebar-accent-foreground: 0 0% 17%; /* Dark Charcoal */
     --sidebar-border: 0 0% 93%; /* Light Grey */
     --sidebar-ring: 122 47% 33%; /* Forest Green */
   }
 
   .dark {
-    --background: 220 13% 18%; /* Dark Charcoal */
-    --foreground: 0 0% 93%; /* Light Grey */
+    --background: 0 0% 17%; /* Dark Charcoal - #2C2C2C */
+    --foreground: 0 0% 93%; /* Light Grey - #EDEDED */
 
-    --card: 220 13% 18%; /* Dark Charcoal */
-    --card-foreground: 0 0% 93%; /* Light Grey */
+    --card: 0 0% 17%; /* Dark Charcoal - #2C2C2C */
+    --card-foreground: 0 0% 93%; /* Light Grey - #EDEDED */
 
-    --popover: 220 13% 18%; /* Dark Charcoal */
-    --popover-foreground: 0 0% 93%; /* Light Grey */
+    --popover: 0 0% 17%; /* Dark Charcoal - #2C2C2C */
+    --popover-foreground: 0 0% 93%; /* Light Grey - #EDEDED */
 
-    --primary: 122 47% 33%; /* Forest Green */
+    --primary: 122 47% 33%; /* Forest Green - #2E7D32 */
     --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 80 55% 50%; /* Soft Olive */
-    --secondary-foreground: 220 13% 18%; /* Dark Charcoal */
+    --secondary: 80 55% 50%; /* Soft Olive - #A4C639 */
+    --secondary-foreground: 0 0% 17%; /* Dark Charcoal */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 27%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 43 89% 50%; /* Wheat Yellow */
-    --accent-foreground: 220 13% 18%; /* Dark Charcoal */
+    --accent: 43 89% 50%; /* Wheat Yellow - #F1C40F */
+    --accent-foreground: 0 0% 17%; /* Dark Charcoal */
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 122 47% 33%; /* Forest Green */
+    --border: 0 0% 27%;
+    --input: 0 0% 27%;
+    --ring: 122 47% 33%; /* Forest Green - #2E7D32 */
 
-    --sidebar-background: 220 13% 18%; /* Dark Charcoal */
+    --sidebar-background: 0 0% 17%; /* Dark Charcoal */
     --sidebar-foreground: 0 0% 93%; /* Light Grey */
     --sidebar-primary: 122 47% 33%; /* Forest Green */
     --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent: 0 0% 27%;
     --sidebar-accent-foreground: 0 0% 93%; /* Light Grey */
-    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-border: 0 0% 27%;
     --sidebar-ring: 122 47% 33%; /* Forest Green */
   }
 }
@@ -93,4 +93,69 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom Styles */
+.text-agrilink-green {
+  color: #2E7D32; /* Forest Green */
+}
+
+.bg-agrilink-green {
+  background-color: #2E7D32; /* Forest Green */
+}
+
+.text-agrilink-olive {
+  color: #A4C639; /* Soft Olive */
+}
+
+.bg-agrilink-olive {
+  background-color: #A4C639; /* Soft Olive */
+}
+
+.text-agrilink-brown {
+  color: #6E4B1F; /* Rich Soil Brown */
+}
+
+.bg-agrilink-brown {
+  background-color: #6E4B1F; /* Rich Soil Brown */
+}
+
+.text-agrilink-blue {
+  color: #87CEEB; /* Sky Blue */
+}
+
+.bg-agrilink-blue {
+  background-color: #87CEEB; /* Sky Blue */
+}
+
+.text-agrilink-beige {
+  color: #F9F5EB; /* Creamy Beige */
+}
+
+.bg-agrilink-beige {
+  background-color: #F9F5EB; /* Creamy Beige */
+}
+
+.text-agrilink-yellow {
+  color: #F1C40F; /* Wheat Yellow */
+}
+
+.bg-agrilink-yellow {
+  background-color: #F1C40F; /* Wheat Yellow */
+}
+
+.text-agrilink-dark {
+  color: #2C2C2C; /* Dark Charcoal */
+}
+
+.bg-agrilink-dark {
+  background-color: #2C2C2C; /* Dark Charcoal */
+}
+
+.text-agrilink-light {
+  color: #EDEDED; /* Light Grey */
+}
+
+.bg-agrilink-light {
+  background-color: #EDEDED; /* Light Grey */
 }
