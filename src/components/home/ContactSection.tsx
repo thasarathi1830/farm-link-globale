@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MapPin, Mail, Phone } from 'lucide-react';
+import { MapPin, Mail, Phone, MessageSquare } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -44,45 +44,76 @@ const ContactSection = ({ contactRef }: ContactSectionProps) => {
   return (
     <section ref={contactRef} className="w-full py-12 md:py-24 bg-white" id="contact">
       <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center text-center space-y-4 mb-8">
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+        <div className="flex flex-col items-center text-center space-y-4 mb-12">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-agrilink-green">
             Contact Us
           </h2>
           <p className="max-w-[700px] text-gray-600 md:text-lg mx-auto">
-            Have questions? Want to learn more? Get in touch with us.
+            Have questions or want to learn more? Get in touch with our team.
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="flex flex-col space-y-6">
-            <div className="flex items-center gap-3">
-              <MapPin className="h-6 w-6 text-agrilink-green" />
-              <div>
-                <h3 className="font-medium text-lg">Our Address</h3>
-                <p className="text-gray-600">AgriLink HQ, 42 Greenfield Avenue, Chennai, Tamil Nadu</p>
+          <div className="flex flex-col space-y-8">
+            <div className="bg-green-50 p-6 rounded-lg">
+              <div className="flex flex-col space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="bg-white p-3 rounded-full shadow-sm">
+                    <MapPin className="h-6 w-6 text-agrilink-green" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Our Address</h3>
+                    <p className="text-gray-600">AgriLink HQ, 42 Greenfield Avenue,<br />Chennai, Tamil Nadu</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="bg-white p-3 rounded-full shadow-sm">
+                    <Mail className="h-6 w-6 text-agrilink-green" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Email</h3>
+                    <p className="text-gray-600">support@agrilink.io</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="bg-white p-3 rounded-full shadow-sm">
+                    <Phone className="h-6 w-6 text-agrilink-green" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg mb-1">Phone</h3>
+                    <p className="text-gray-600">+91-98765-43210</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Mail className="h-6 w-6 text-agrilink-green" />
-              <div>
-                <h3 className="font-medium text-lg">Email</h3>
-                <p className="text-gray-600">support@agrilink.io</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Phone className="h-6 w-6 text-agrilink-green" />
-              <div>
-                <h3 className="font-medium text-lg">Phone</h3>
-                <p className="text-gray-600">+91-98765-43210</p>
+            
+            <div className="bg-green-50 p-6 rounded-lg">
+              <h3 className="font-semibold text-lg mb-4">Business Hours</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Monday - Friday:</span>
+                  <span className="font-medium">9:00 AM - 6:00 PM</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Saturday:</span>
+                  <span className="font-medium">10:00 AM - 4:00 PM</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Sunday:</span>
+                  <span className="font-medium">Closed</span>
+                </div>
               </div>
             </div>
           </div>
           
-          <div className="bg-green-50 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold mb-4">Send Us a Message</h3>
+          <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
+            <div className="flex items-center gap-3 mb-6">
+              <MessageSquare className="h-6 w-6 text-agrilink-green" />
+              <h3 className="text-xl font-semibold">Send Us a Message</h3>
+            </div>
             
             <Form {...contactForm}>
-              <form onSubmit={contactForm.handleSubmit(onContactSubmit)} className="space-y-4">
+              <form onSubmit={contactForm.handleSubmit(onContactSubmit)} className="space-y-5">
                 <FormField
                   control={contactForm.control}
                   name="name"
@@ -90,7 +121,7 @@ const ContactSection = ({ contactRef }: ContactSectionProps) => {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Your name" {...field} />
+                        <Input placeholder="Your name" {...field} className="focus-visible:ring-agrilink-green" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -104,7 +135,7 @@ const ContactSection = ({ contactRef }: ContactSectionProps) => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="your@email.com" {...field} />
+                        <Input placeholder="your@email.com" {...field} className="focus-visible:ring-agrilink-green" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -120,7 +151,7 @@ const ContactSection = ({ contactRef }: ContactSectionProps) => {
                       <FormControl>
                         <Textarea 
                           placeholder="How can we help you?" 
-                          className="min-h-[120px]" 
+                          className="min-h-[120px] focus-visible:ring-agrilink-green" 
                           {...field} 
                         />
                       </FormControl>
@@ -129,7 +160,12 @@ const ContactSection = ({ contactRef }: ContactSectionProps) => {
                   )}
                 />
                 
-                <Button type="submit" className="w-full">Submit Message</Button>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-agrilink-green hover:bg-agrilink-green/90"
+                >
+                  Submit Message
+                </Button>
               </form>
             </Form>
           </div>
