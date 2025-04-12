@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { UserProfile } from '@/hooks/auth/types';
+import { useAuth } from '@/hooks/auth';
 
 interface DashboardHeaderProps {
   name: string;
