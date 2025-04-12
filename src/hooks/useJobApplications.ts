@@ -27,7 +27,7 @@ export const useJobApplications = ({ userId }: UseJobApplicationsProps) => {
       const { data, error } = await supabase
         .from('saved_jobs')
         .select('job_id')
-        .eq('farmer_id', userId || 0);
+        .eq('farmer_id', userId ? Number(userId) : 0);
 
       if (error) throw error;
       
@@ -46,7 +46,7 @@ export const useJobApplications = ({ userId }: UseJobApplicationsProps) => {
       const { data, error } = await supabase
         .from('job_applications')
         .select('job_id')
-        .eq('farmer_id', userId || 0);
+        .eq('farmer_id', userId ? Number(userId) : 0);
 
       if (error) throw error;
       
@@ -107,7 +107,7 @@ export const useJobApplications = ({ userId }: UseJobApplicationsProps) => {
         .from('saved_jobs')
         .delete()
         .eq('job_id', jobId)
-        .eq('farmer_id', userId);
+        .eq('farmer_id', Number(userId));
         
       if (error) throw error;
       

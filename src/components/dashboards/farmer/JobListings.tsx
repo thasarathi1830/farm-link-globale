@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/auth/useAuth';
 import JobApplicationForm from './JobApplicationForm';
+import { useJobApplications } from '@/hooks/useJobApplications';
 
 interface JobListing {
   id: number;
@@ -24,8 +25,16 @@ const JobListings = () => {
   const { toast } = useToast();
   const { profile } = useAuth();
   const [openJobId, setOpenJobId] = useState<number | null>(null);
-  const [savedJobs, setSavedJobs] = useState<number[]>([]);
-  const [appliedJobs, setAppliedJobs] = useState<number[]>([]);
+  
+  // Use the custom hook for job applications
+  const { 
+    savedJobs, 
+    appliedJobs, 
+    toggleSaveJob, 
+    isJobSaved, 
+    isJobApplied,
+    applyForJob
+  } = useJobApplications({ userId: profile?.id });
   
   // Mock job listings - in a real app, these would come from the database
   const jobListings: JobListing[] = [
@@ -53,106 +62,6 @@ const JobListings = () => {
     }
   ];
 
-  useEffect(() => {
-    if (profile) {
-      fetchSavedJobs();
-      fetchAppliedJobs();
-    }
-  }, [profile]);
-
-  const fetchSavedJobs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('saved_jobs')
-        .select('job_id')
-        .eq('farmer_id', profile?.id || 0);
-
-      if (error) throw error;
-      
-      if (data) {
-        setSavedJobs(data.map(item => item.job_id));
-      }
-    } catch (error) {
-      console.error('Error fetching saved jobs:', error);
-    }
-  };
-
-  const fetchAppliedJobs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('job_applications')
-        .select('job_id')
-        .eq('farmer_id', profile?.id || 0);
-
-      if (error) throw error;
-      
-      if (data) {
-        setAppliedJobs(data.map(item => item.job_id));
-      }
-    } catch (error) {
-      console.error('Error fetching applied jobs:', error);
-    }
-  };
-
-  const toggleSaveJob = async (job: JobListing) => {
-    if (!profile) {
-      toast({
-        title: "Authentication required",
-        description: "Please log in to save jobs",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const isAlreadySaved = savedJobs.includes(job.id);
-      
-      if (isAlreadySaved) {
-        // Delete the saved job
-        const { error } = await supabase
-          .from('saved_jobs')
-          .delete()
-          .eq('job_id', job.id)
-          .eq('farmer_id', profile.id);
-          
-        if (error) throw error;
-        
-        setSavedJobs(savedJobs.filter(id => id !== job.id));
-        
-        toast({
-          title: "Job removed",
-          description: "Job removed from your saved list"
-        });
-      } else {
-        // Save the job
-        const { error } = await supabase
-          .from('saved_jobs')
-          .insert({
-            job_id: job.id,
-            farmer_id: Number(profile.id),
-            title: job.title,
-            company_name: job.company,
-          });
-          
-        if (error) throw error;
-        
-        setSavedJobs([...savedJobs, job.id]);
-        
-        toast({
-          title: "Job saved",
-          description: "Job added to your saved list"
-        });
-      }
-    } catch (error) {
-      console.error('Error saving/unsaving job:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save job. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
   const openApplicationForm = (jobId: number) => {
     setOpenJobId(jobId);
   };
@@ -162,12 +71,15 @@ const JobListings = () => {
   };
 
   const handleApplicationSuccess = (jobId: number) => {
-    setAppliedJobs([...appliedJobs, jobId]);
-    setOpenJobId(null);
+    closeApplicationForm();
     toast({
       title: "Application submitted",
       description: "Your job application has been submitted successfully!"
     });
+  };
+
+  const handleToggleSaveJob = (job: JobListing) => {
+    toggleSaveJob(job.id, job.title, job.company);
   };
 
   return (
@@ -195,7 +107,7 @@ const JobListings = () => {
               <p className="mt-2">{job.description}</p>
             </div>
             <div className="flex gap-2">
-              {appliedJobs.includes(job.id) ? (
+              {isJobApplied(job.id) ? (
                 <Button size="sm" variant="outline" disabled>
                   <FileText className="mr-2 h-4 w-4" /> Applied
                 </Button>
@@ -208,9 +120,9 @@ const JobListings = () => {
               <Button 
                 size="sm" 
                 variant="outline" 
-                onClick={() => toggleSaveJob(job)}
+                onClick={() => handleToggleSaveJob(job)}
               >
-                {savedJobs.includes(job.id) ? (
+                {isJobSaved(job.id) ? (
                   <>
                     <BookmarkCheck className="mr-2 h-4 w-4" /> Saved
                   </>
@@ -235,6 +147,7 @@ const JobListings = () => {
           isOpen={openJobId !== null}
           onClose={closeApplicationForm}
           onSuccess={() => handleApplicationSuccess(openJobId)}
+          onSubmit={(data) => applyForJob(openJobId, data)}
         />
       )}
     </div>

@@ -13,8 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { Loader2 } from 'lucide-react';
 
@@ -27,13 +25,14 @@ interface JobApplicationFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  onSubmit: (data: FormValues) => Promise<boolean>;
 }
 
 interface FormValues {
   name: string;
   email: string;
   message: string;
-  file?: FileList;
+  file?: File;
 }
 
 const JobApplicationForm: React.FC<JobApplicationFormProps> = ({
@@ -41,10 +40,10 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({
   job,
   isOpen,
   onClose,
-  onSuccess
+  onSuccess,
+  onSubmit
 }) => {
   const { profile } = useAuth();
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
@@ -55,64 +54,22 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({
     }
   });
 
-  const onSubmit = async (data: FormValues) => {
-    if (!profile) {
-      toast({
-        title: "Authentication required",
-        description: "Please log in to apply for jobs",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+  const handleFormSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
     try {
-      let fileUrl = null;
+      const result = await onSubmit({
+        name: data.name,
+        email: data.email,
+        message: data.message,
+        file: data.file && data.file[0]
+      });
       
-      // Upload file if provided
-      if (data.file && data.file.length > 0) {
-        const file = data.file[0];
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `job-applications/${fileName}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('job-applications')
-          .upload(filePath, file);
-          
-        if (uploadError) throw uploadError;
-        
-        // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('job-applications')
-          .getPublicUrl(filePath);
-          
-        fileUrl = publicUrl;
+      if (result) {
+        onSuccess();
       }
-      
-      // Save application to database
-      const { error: insertError } = await supabase
-        .from('job_applications')
-        .insert({
-          job_id: jobId,
-          farmer_id: Number(profile.id),
-          name: data.name,
-          email: data.email,
-          message: data.message,
-          file_url: fileUrl
-        });
-        
-      if (insertError) throw insertError;
-      
-      onSuccess();
     } catch (error) {
       console.error('Error submitting application:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit application. Please try again.",
-        variant: "destructive"
-      });
     } finally {
       setIsSubmitting(false);
     }
@@ -128,7 +85,7 @@ const JobApplicationForm: React.FC<JobApplicationFormProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 py-4">
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
