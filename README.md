@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to project
 
 ## Project info
 
@@ -8,9 +8,6 @@
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/f07ace8d-7286-48f9-8f11-2f9dcf6824d0) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
