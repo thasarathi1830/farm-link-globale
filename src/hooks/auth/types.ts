@@ -1,6 +1,4 @@
 
-import { User, Session } from '@supabase/supabase-js';
-
 export type UserRole = 'farmer' | 'landowner' | 'corporate' | null;
 
 export interface UserProfile {
@@ -10,16 +8,4 @@ export interface UserProfile {
   role: UserRole;
   phone?: string | null;
   photoUrl?: string | null;
-}
-
-export interface AuthContextType {
-  user: User | null;
-  profile: UserProfile | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
-  logout: () => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  signupWithGoogle: (role: UserRole) => Promise<void>;
 }

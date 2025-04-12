@@ -1,64 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useAuth, UserRole } from '@/hooks/auth';
 import { Sprout, Users, Building } from 'lucide-react';
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-  confirmPassword: z.string(),
-  role: z.enum(['farmer', 'landowner', 'corporate'] as const),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { toast } from 'sonner';
 
 const Register = () => {
-  const { register, isLoading, isAuthenticated } = useAuth();
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: 'farmer',
-    },
-  });
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const onSubmit = async (values: FormValues) => {
-    try {
-      setError(null);
-      await register(values.name, values.email, values.password, values.role as UserRole);
-    } catch (error) {
-      setError('Registration failed. Please try again.');
-    }
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success('Account created successfully!');
+    navigate('/dashboard');
   };
 
   return (
@@ -74,126 +30,71 @@ const Register = () => {
           </p>
         </div>
         
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Your name" 
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+        <form onSubmit={handleRegister} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Full Name</Label>
+            <Input 
+              id="name"
+              placeholder="Your name" 
+              required
             />
-            
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Your email" 
-                      type="email" 
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input 
+              id="email"
+              placeholder="Your email" 
+              type="email" 
+              required
             />
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Your password" 
-                      type="password" 
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input 
+              id="password"
+              placeholder="Your password" 
+              type="password" 
+              required
             />
-            
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Confirm your password" 
-                      type="password" 
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Input 
+              id="confirmPassword"
+              placeholder="Confirm your password" 
+              type="password" 
+              required
             />
+          </div>
 
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>I am a:</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex flex-col space-y-2"
-                    >
-                      <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-green-50 cursor-pointer">
-                        <RadioGroupItem value="farmer" id="farmer" />
-                        <Sprout className="h-4 w-4 text-agrilink-green" />
-                        <label htmlFor="farmer" className="cursor-pointer flex-1">Farmer</label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-green-50 cursor-pointer">
-                        <RadioGroupItem value="landowner" id="landowner" />
-                        <Users className="h-4 w-4 text-agrilink-brown" />
-                        <label htmlFor="landowner" className="cursor-pointer flex-1">Landowner</label>
-                      </div>
-                      <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-green-50 cursor-pointer">
-                        <RadioGroupItem value="corporate" id="corporate" />
-                        <Building className="h-4 w-4 text-agrilink-blue" />
-                        <label htmlFor="corporate" className="cursor-pointer flex-1">Corporate/MNC</label>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
-            
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create account'}
-            </Button>
-          </form>
-        </Form>
+          <div className="space-y-3">
+            <Label>I am a:</Label>
+            <RadioGroup defaultValue="farmer" className="flex flex-col space-y-2">
+              <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-green-50 cursor-pointer">
+                <RadioGroupItem value="farmer" id="farmer" />
+                <Sprout className="h-4 w-4 text-agrilink-green" />
+                <label htmlFor="farmer" className="cursor-pointer flex-1">Farmer</label>
+              </div>
+              <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-green-50 cursor-pointer">
+                <RadioGroupItem value="landowner" id="landowner" />
+                <Users className="h-4 w-4 text-agrilink-brown" />
+                <label htmlFor="landowner" className="cursor-pointer flex-1">Landowner</label>
+              </div>
+              <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-green-50 cursor-pointer">
+                <RadioGroupItem value="corporate" id="corporate" />
+                <Building className="h-4 w-4 text-agrilink-blue" />
+                <label htmlFor="corporate" className="cursor-pointer flex-1">Corporate/MNC</label>
+              </div>
+            </RadioGroup>
+          </div>
+          
+          <Button type="submit" className="w-full">
+            Create account
+          </Button>
+        </form>
         
         <div className="text-center text-sm">
           Already have an account?{' '}

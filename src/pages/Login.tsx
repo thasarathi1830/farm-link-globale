@@ -1,59 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/hooks/auth';
+import { Label } from '@/components/ui/label';
 import { Sprout } from 'lucide-react';
-
-const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { toast } from 'sonner';
 
 const Login = () => {
-  const { login, isLoading, isAuthenticated } = useAuth();
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  });
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const onSubmit = async (values: FormValues) => {
-    try {
-      setError(null);
-      await login(values.email, values.password);
-    } catch (error) {
-      setError('Invalid email or password. Please try again.');
-    }
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success('Login successful!');
+    navigate('/dashboard');
   };
 
   const setDemoAccount = (email: string, password: string) => {
-    form.setValue('email', email);
-    form.setValue('password', password);
+    const emailInput = document.getElementById('email') as HTMLInputElement;
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    
+    if (emailInput) emailInput.value = email;
+    if (passwordInput) passwordInput.value = password;
   };
 
   return (
@@ -69,55 +37,31 @@ const Login = () => {
           </p>
         </div>
         
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Your email" 
-                      type="email" 
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input 
+              id="email"
+              placeholder="Your email" 
+              type="email" 
+              required
             />
-            
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Your password" 
-                      type="password" 
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input 
+              id="password"
+              placeholder="Your password" 
+              type="password" 
+              required
             />
-            
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
-            
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </Button>
-          </form>
-        </Form>
+          </div>
+          
+          <Button type="submit" className="w-full">
+            Sign in
+          </Button>
+        </form>
         
         <div className="text-center text-sm">
           Don't have an account?{' '}
@@ -132,7 +76,6 @@ const Login = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              disabled={isLoading}
               onClick={() => setDemoAccount('farmer@example.com', 'password123')}
             >
               Farmer: farmer@example.com
@@ -140,7 +83,6 @@ const Login = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              disabled={isLoading}
               onClick={() => setDemoAccount('landowner@example.com', 'password123')}
             >
               Landowner: landowner@example.com
@@ -148,7 +90,6 @@ const Login = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              disabled={isLoading}
               onClick={() => setDemoAccount('corporate@example.com', 'password123')}
             >
               Corporate: corporate@example.com

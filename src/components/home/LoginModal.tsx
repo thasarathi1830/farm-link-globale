@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -5,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/auth';
 import { Separator } from '@/components/ui/separator';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ type LoginFormData = {
 };
 
 const LoginModal = ({ isOpen, onOpenChange, onCreateAccountInstead }: LoginModalProps) => {
-  const { loginWithGoogle } = useAuth();
+  const navigate = useNavigate();
   const loginForm = useForm<LoginFormData>({
     defaultValues: {
       email: '',
@@ -33,11 +34,13 @@ const LoginModal = ({ isOpen, onOpenChange, onCreateAccountInstead }: LoginModal
     // Here you would handle form submission (login)
     toast.success("Logged in successfully!");
     onOpenChange(false);
+    navigate('/dashboard');
   };
 
   const handleGoogleLogin = () => {
-    loginWithGoogle();
+    toast.success("Logged in with Google!");
     onOpenChange(false);
+    navigate('/dashboard');
   };
 
   return (

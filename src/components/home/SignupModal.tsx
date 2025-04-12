@@ -1,16 +1,17 @@
+
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Sprout, Users, Building, Mail } from 'lucide-react';
+import { Sprout, Users, Building } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/auth';
 import { Separator } from '@/components/ui/separator';
+import { useNavigate } from 'react-router-dom';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const signupSchema = z.object({
 type SignupFormData = z.infer<typeof signupSchema>;
 
 const SignupModal = ({ isOpen, onOpenChange, selectedRole, onLoginInstead }: SignupModalProps) => {
-  const { signupWithGoogle } = useAuth();
+  const navigate = useNavigate();
   const signupForm = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -51,12 +52,14 @@ const SignupModal = ({ isOpen, onOpenChange, selectedRole, onLoginInstead }: Sig
     // Here you would handle form submission (signup)
     toast.success("Account created successfully! Please check your email.");
     onOpenChange(false);
+    navigate('/dashboard');
   };
 
   const handleGoogleSignup = () => {
     if (selectedRole) {
-      signupWithGoogle(selectedRole);
+      toast.success("Signed up with Google!");
       onOpenChange(false);
+      navigate('/dashboard');
     } else {
       toast.error("Please select a role first");
     }

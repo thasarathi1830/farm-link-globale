@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/hooks/auth';
 import ProfileCards from './farmer/ProfileCards';
 import SkillsExperience from './farmer/SkillsExperience';
 import DashboardHeader from './farmer/DashboardHeader';
@@ -13,11 +12,9 @@ import MNCPrograms from './farmer/MNCPrograms';
 import ProfileStats from './farmer/ProfileStats';
 
 const FarmerDashboard = () => {
-  const { profile } = useAuth();
-
   return (
     <div className="container py-10">
-      <DashboardHeader name={profile?.name || 'Farmer'} />
+      <DashboardHeader name="Farmer" />
 
       <Tabs defaultValue="profile" className="w-full space-y-4">
         <TabsList>

@@ -1,6 +1,4 @@
-import React from 'react';
-import { useAuth, UserRole } from '@/hooks/auth';
-import { Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,23 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Upload } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const Profile = () => {
-  const { user, profile, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
-  const [saving, setSaving] = React.useState(false);
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  const [saving, setSaving] = useState(false);
+  const [role, setRole] = useState<'farmer' | 'landowner' | 'corporate'>('farmer');
 
   const handleSave = () => {
     setSaving(true);
@@ -40,7 +27,7 @@ const Profile = () => {
   };
 
   const renderRoleSpecificFields = () => {
-    switch (user?.role) {
+    switch (role) {
       case 'farmer':
         return (
           <>
@@ -191,7 +178,7 @@ const Profile = () => {
               <div className="flex flex-col items-center gap-4">
                 <Avatar className="h-24 w-24">
                   <AvatarFallback className="text-2xl bg-primary text-primary-foreground">
-                    {profile?.name?.charAt(0) || 'U'}
+                    U
                   </AvatarFallback>
                 </Avatar>
                 <Button variant="outline" className="w-full flex gap-2">
@@ -203,25 +190,34 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" defaultValue={profile?.name || ''} />
+                    <Input id="name" placeholder="Your name" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" defaultValue={profile?.email || ''} readOnly />
+                    <Input id="email" placeholder="Your email" />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" placeholder="Enter your phone number" defaultValue={profile?.phone || ''} />
+                    <Input id="phone" placeholder="Enter your phone number" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Role</Label>
-                    <Input id="role" value={
-                      user?.role === 'farmer' ? 'Farmer' :
-                      user?.role === 'landowner' ? 'Landowner' :
-                      user?.role === 'corporate' ? 'Corporate/MNC' : ''
-                    } readOnly />
+                    <RadioGroup value={role} onValueChange={(value: any) => setRole(value)} className="flex space-x-4 mt-2">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="farmer" id="role-farmer" />
+                        <label htmlFor="role-farmer">Farmer</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="landowner" id="role-landowner" />
+                        <label htmlFor="role-landowner">Landowner</label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="corporate" id="role-corporate" />
+                        <label htmlFor="role-corporate">Corporate</label>
+                      </div>
+                    </RadioGroup>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -273,7 +269,7 @@ const Profile = () => {
                     </div>
                   </div>
                   
-                  {user?.role === 'farmer' && (
+                  {role === 'farmer' && (
                     <div className="border rounded-md p-4">
                       <h3 className="font-medium mb-2">Experience Certificate</h3>
                       <p className="text-sm text-muted-foreground mb-4">Upload any certifications or experience letters</p>
@@ -283,7 +279,7 @@ const Profile = () => {
                     </div>
                   )}
                   
-                  {user?.role === 'landowner' && (
+                  {role === 'landowner' && (
                     <div className="border rounded-md p-4">
                       <h3 className="font-medium mb-2">Land Ownership Documents</h3>
                       <p className="text-sm text-muted-foreground mb-4">Upload proof of land ownership</p>
@@ -293,7 +289,7 @@ const Profile = () => {
                     </div>
                   )}
                   
-                  {user?.role === 'corporate' && (
+                  {role === 'corporate' && (
                     <div className="border rounded-md p-4">
                       <h3 className="font-medium mb-2">Business Registration</h3>
                       <p className="text-sm text-muted-foreground mb-4">Upload company registration documents</p>
