@@ -140,6 +140,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
       
       // The redirect happens automatically, so we don't need to do anything else here
+      toast({
+        title: "Redirecting to Google",
+        description: "You will be redirected to Google for authentication.",
+      });
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -161,12 +165,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/dashboard`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       });
       
       if (error) throw error;
       
+      toast({
+        title: "Redirecting to Google",
+        description: "You will be redirected to Google for account creation.",
+      });
       // The redirect happens automatically
     } catch (error: any) {
       toast({
