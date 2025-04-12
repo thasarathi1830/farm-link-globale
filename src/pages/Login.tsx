@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth';
 import { Sprout } from 'lucide-react';
 
 const formSchema = z.object({
@@ -37,7 +36,6 @@ const Login = () => {
     },
   });
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
@@ -128,7 +126,6 @@ const Login = () => {
           </Link>
         </div>
 
-        {/* Demo accounts for testing */}
         <div className="border-t pt-4">
           <p className="text-xs text-muted-foreground mb-2 text-center">Demo accounts:</p>
           <div className="grid grid-cols-1 gap-2 text-xs">

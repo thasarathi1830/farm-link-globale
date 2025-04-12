@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth';
 import { Navigate } from 'react-router-dom';
 import FarmerDashboard from '@/components/dashboards/FarmerDashboard';
 import LandownerDashboard from '@/components/dashboards/LandownerDashboard';

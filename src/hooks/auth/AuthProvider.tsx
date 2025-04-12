@@ -4,29 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Session, User } from '@supabase/supabase-js';
-
-export type UserRole = 'farmer' | 'landowner' | 'corporate' | null;
-
-export interface UserProfile {
-  id: string;
-  name: string | null;
-  email: string | null;
-  role: UserRole;
-  phone?: string | null;
-  photoUrl?: string | null;
-}
-
-interface AuthContextType {
-  user: User | null;
-  profile: UserProfile | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
-  logout: () => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  signupWithGoogle: (role: UserRole) => Promise<void>;
-}
+import { AuthContextType, UserProfile, UserRole } from './types';
+import { fetchUserProfile } from './auth-utils';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -47,7 +26,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (newSession?.user) {
           setIsLoading(true);
-          await fetchUserProfile(newSession.user.id);
+          const userProfile = await fetchUserProfile(newSession.user.id);
+          setProfile(userProfile);
           setIsLoading(false);
         } else {
           setProfile(null);
@@ -61,7 +41,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
-        await fetchUserProfile(currentSession.user.id);
+        const userProfile = await fetchUserProfile(currentSession.user.id);
+        setProfile(userProfile);
       }
       
       setIsLoading(false);
@@ -71,34 +52,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       subscription.unsubscribe();
     };
   }, []);
-
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return;
-      }
-
-      if (data) {
-        setProfile({
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          role: data.role as UserRole,
-          phone: data.phone,
-          photoUrl: null // We'll add this feature later
-        });
-      }
-    } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
-    }
-  };
 
   const login = async (email: string, password: string) => {
     try {
@@ -112,7 +65,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
       
       if (data.user) {
-        await fetchUserProfile(data.user.id);
+        const userProfile = await fetchUserProfile(data.user.id);
+        setProfile(userProfile);
         
         toast({
           title: "Login successful",
@@ -262,10 +216,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => {
+export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuthContext must be used within an AuthProvider');
   }
   return context;
 };

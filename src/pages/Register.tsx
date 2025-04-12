@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useAuth, UserRole } from '@/hooks/useAuth';
+import { useAuth, UserRole } from '@/hooks/auth';
 import { Sprout, Users, Building } from 'lucide-react';
 
 const formSchema = z.object({
@@ -47,7 +46,6 @@ const Register = () => {
     },
   });
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
