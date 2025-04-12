@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -6,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/auth';
 
 const MobileNav = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, profile, logout } = useAuth();
   const [open, setOpen] = React.useState(false);
 
   const handleLinkClick = () => {
@@ -51,8 +52,8 @@ const MobileNav = () => {
             {isAuthenticated ? (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user?.name || 'User'}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email || ''}</p>
+                  <p className="text-sm font-medium leading-none">{profile?.name || 'User'}</p>
+                  <p className="text-xs text-muted-foreground">{profile?.email || ''}</p>
                 </div>
                 <Link 
                   to="/dashboard" 

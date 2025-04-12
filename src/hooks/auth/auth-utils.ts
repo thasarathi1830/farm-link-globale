@@ -1,7 +1,7 @@
 
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { UserProfile } from './types';
+import { UserProfile, UserRole } from './types';
 
 export async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
   try {
@@ -21,7 +21,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
         id: data.id,
         name: data.name,
         email: data.email,
-        role: data.role,
+        role: data.role as UserRole,
         phone: data.phone,
         photoUrl: null // We'll add this feature later
       };

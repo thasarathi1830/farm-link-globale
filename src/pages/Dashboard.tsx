@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAuth } from '@/hooks/auth';
 import { Navigate } from 'react-router-dom';
@@ -7,7 +8,7 @@ import CorporateDashboard from '@/components/dashboards/CorporateDashboard';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const Dashboard = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { profile, isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -28,11 +29,11 @@ const Dashboard = () => {
     return <Navigate to="/login" />;
   }
 
-  if (!user) {
+  if (!profile) {
     return <Navigate to="/login" />;
   }
 
-  switch (user.role) {
+  switch (profile.role) {
     case 'farmer':
       return <FarmerDashboard />;
     case 'landowner':

@@ -12,7 +12,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Upload } from 'lucide-react';
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, profile, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
   const [saving, setSaving] = React.useState(false);
 
@@ -191,7 +191,7 @@ const Profile = () => {
               <div className="flex flex-col items-center gap-4">
                 <Avatar className="h-24 w-24">
                   <AvatarFallback className="text-2xl bg-primary text-primary-foreground">
-                    {user?.name?.charAt(0) || 'U'}
+                    {profile?.name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <Button variant="outline" className="w-full flex gap-2">
@@ -203,17 +203,17 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" defaultValue={user?.name || ''} />
+                    <Input id="name" defaultValue={profile?.name || ''} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" defaultValue={user?.email || ''} readOnly />
+                    <Input id="email" defaultValue={profile?.email || ''} readOnly />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" placeholder="Enter your phone number" defaultValue={user?.phone || ''} />
+                    <Input id="phone" placeholder="Enter your phone number" defaultValue={profile?.phone || ''} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Role</Label>
