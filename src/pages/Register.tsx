@@ -1,20 +1,31 @@
 
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Sprout, Users, Building } from 'lucide-react';
-import { toast } from 'sonner';
+import { useAuth } from '@/hooks/auth';
+import { UserRole } from '@/hooks/auth/types';
 
 const Register = () => {
-  const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState<UserRole>('farmer');
+  const { register, isLoading } = useAuth();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Account created successfully!');
-    navigate('/dashboard');
+    
+    if (password !== confirmPassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+    
+    await register(name, email, password, role);
   };
 
   return (
@@ -36,6 +47,8 @@ const Register = () => {
             <Input 
               id="name"
               placeholder="Your name" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
@@ -45,7 +58,9 @@ const Register = () => {
             <Input 
               id="email"
               placeholder="Your email" 
-              type="email" 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -55,7 +70,9 @@ const Register = () => {
             <Input 
               id="password"
               placeholder="Your password" 
-              type="password" 
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
@@ -65,14 +82,21 @@ const Register = () => {
             <Input 
               id="confirmPassword"
               placeholder="Confirm your password" 
-              type="password" 
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
           </div>
 
           <div className="space-y-3">
             <Label>I am a:</Label>
-            <RadioGroup defaultValue="farmer" className="flex flex-col space-y-2">
+            <RadioGroup 
+              defaultValue="farmer" 
+              className="flex flex-col space-y-2"
+              value={role}
+              onValueChange={(value) => setRole(value as UserRole)}
+            >
               <div className="flex items-center space-x-2 border rounded-md p-3 hover:bg-green-50 cursor-pointer">
                 <RadioGroupItem value="farmer" id="farmer" />
                 <Sprout className="h-4 w-4 text-agrilink-green" />
@@ -91,8 +115,8 @@ const Register = () => {
             </RadioGroup>
           </div>
           
-          <Button type="submit" className="w-full">
-            Create account
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Creating account..." : "Create account"}
           </Button>
         </form>
         

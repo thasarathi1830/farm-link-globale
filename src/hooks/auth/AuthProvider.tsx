@@ -1,80 +1,48 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { Session, User } from '@supabase/supabase-js';
 import { AuthContextType, UserProfile, UserRole } from './types';
 import { fetchUserProfile } from './auth-utils';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // First set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, newSession) => {
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
-        
-        if (newSession?.user) {
-          setIsLoading(true);
-          const userProfile = await fetchUserProfile(newSession.user.id);
-          setProfile(userProfile);
-          setIsLoading(false);
-        } else {
-          setProfile(null);
-        }
-      }
-    );
-
-    // Then check for existing session
-    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      
-      if (currentSession?.user) {
-        const userProfile = await fetchUserProfile(currentSession.user.id);
-        setProfile(userProfile);
-      }
-      
-      setIsLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
+      // Simulate login - in a real app, this would validate with a backend
+      let userId: string;
+      if (email === 'farmer@example.com') {
+        userId = "1";
+      } else if (email === 'landowner@example.com') {
+        userId = "2";
+      } else if (email === 'corporate@example.com') {
+        userId = "3";
+      } else {
+        throw new Error("Invalid email or password");
+      }
+      
+      // Set the user
+      setUser({ id: userId, email });
+      
+      // Fetch the user profile
+      const userProfile = await fetchUserProfile(userId);
+      setProfile(userProfile);
+      
+      toast({
+        title: "Login successful",
+        description: `Welcome back!`,
       });
       
-      if (error) throw error;
-      
-      if (data.user) {
-        const userProfile = await fetchUserProfile(data.user.id);
-        setProfile(userProfile);
-        
-        toast({
-          title: "Login successful",
-          description: `Welcome back!`,
-        });
-        
-        navigate('/dashboard');
-      }
+      navigate('/dashboard');
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -90,31 +58,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      // Register the user with Supabase
-      const { data, error } = await supabase.auth.signUp({
+      // Simulate registration
+      const userId = Math.floor(Math.random() * 1000).toString();
+      
+      // Set the user
+      setUser({ id: userId, email });
+      
+      // Create a mock profile
+      const newProfile: UserProfile = {
+        id: userId,
+        name,
         email,
-        password,
-        options: {
-          data: {
-            name,
-            role
-          }
-        }
+        role,
+        phone: null,
+        photoUrl: null
+      };
+      
+      setProfile(newProfile);
+      
+      toast({
+        title: "Registration successful",
+        description: "Your account has been created.",
       });
       
-      if (error) throw error;
-      
-      if (data.user) {
-        // The trigger we created in the database will handle creating the user profile
-        toast({
-          title: "Registration successful",
-          description: "Your account has been created.",
-        });
-        
-        // In a real app, you might want to wait for email confirmation here
-        // But for the demo, we'll just redirect to the dashboard
-        navigate('/dashboard');
-      }
+      navigate('/dashboard');
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -130,22 +97,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`
-        }
+      // Simulate OAuth login
+      const userId = "1"; // Default to farmer for demonstration
+      
+      setUser({ id: userId, email: "farmer@example.com" });
+      const userProfile = await fetchUserProfile(userId);
+      setProfile(userProfile);
+      
+      toast({
+        title: "Google login successful",
+        description: "Welcome back!",
       });
       
-      if (error) throw error;
-      
-      // The redirect happens automatically, so we don't need to do anything else here
+      navigate('/dashboard');
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Google login failed",
         description: error.message || "Failed to log in with Google. Please try again.",
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -154,33 +125,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       
-      // For Google sign-up, we'll use the same OAuth flow but store the desired role in localStorage
-      // We'll set it in the user metadata after the OAuth flow completes
-      localStorage.setItem('signup_role', role || 'farmer');
+      // Simulate OAuth signup
+      const userId = Math.floor(Math.random() * 1000).toString();
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`
-        }
+      setUser({ id: userId, email: "new.user@example.com" });
+      
+      const newProfile: UserProfile = {
+        id: userId,
+        name: "New User",
+        email: "new.user@example.com",
+        role,
+        phone: null,
+        photoUrl: null
+      };
+      
+      setProfile(newProfile);
+      
+      toast({
+        title: "Google signup successful",
+        description: "Your account has been created.",
       });
       
-      if (error) throw error;
-      
-      // The redirect happens automatically
+      navigate('/dashboard');
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Google signup failed",
         description: error.message || "Failed to sign up with Google. Please try again.",
       });
+    } finally {
       setIsLoading(false);
     }
   };
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      // Clear user data
+      setUser(null);
+      setProfile(null);
       
       toast({
         title: "Logged out",

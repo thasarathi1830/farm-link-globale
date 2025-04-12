@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import MobileNav from './MobileNav';
 import { Sprout } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/hooks/auth';
 
 const Header = () => {
-  // Mock authentication state for demo purposes
-  const isAuthenticated = false;
+  const { isAuthenticated, profile, logout } = useAuth();
   
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -33,16 +33,16 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-agrilink-green text-white">
-                    U
+                    {profile?.name?.[0] || 'U'}
                   </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">User</p>
+                    <p className="text-sm font-medium leading-none">{profile?.name || 'User'}</p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      user@example.com
+                      {profile?.email || 'user@example.com'}
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -54,7 +54,7 @@ const Header = () => {
                   <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => logout()}>
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>

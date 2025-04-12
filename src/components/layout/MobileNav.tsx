@@ -4,13 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/auth';
 
 const MobileNav = () => {
   const [open, setOpen] = React.useState(false);
-  // Mock authentication state for demo purposes
-  const isAuthenticated = false;
+  const { isAuthenticated, profile, logout } = useAuth();
 
   const handleLinkClick = () => {
+    setOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
     setOpen(false);
   };
 
@@ -52,8 +57,8 @@ const MobileNav = () => {
             {isAuthenticated ? (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">User</p>
-                  <p className="text-xs text-muted-foreground">user@example.com</p>
+                  <p className="text-sm font-medium leading-none">{profile?.name || 'User'}</p>
+                  <p className="text-xs text-muted-foreground">{profile?.email || 'user@example.com'}</p>
                 </div>
                 <Link 
                   to="/dashboard" 
@@ -69,7 +74,7 @@ const MobileNav = () => {
                 >
                   Profile
                 </Link>
-                <Button variant="outline">
+                <Button variant="outline" onClick={handleLogout}>
                   Log out
                 </Button>
               </div>
