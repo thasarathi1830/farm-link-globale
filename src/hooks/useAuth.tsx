@@ -2,25 +2,28 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Session, User } from '@supabase/supabase-js';
 
 export type UserRole = 'farmer' | 'landowner' | 'corporate' | null;
 
-export interface User {
+export interface UserProfile {
   id: string;
-  name: string;
-  email: string;
+  name: string | null;
+  email: string | null;
   role: UserRole;
-  phone?: string;
-  photoUrl?: string;
+  phone?: string | null;
+  photoUrl?: string | null;
 }
 
 interface AuthContextType {
   user: User | null;
+  profile: UserProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, role: UserRole) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   signupWithGoogle: (role: UserRole) => Promise<void>;
 }
@@ -29,61 +32,100 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for user in localStorage
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    // First set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, newSession) => {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        
+        if (newSession?.user) {
+          setIsLoading(true);
+          await fetchUserProfile(newSession.user.id);
+          setIsLoading(false);
+        } else {
+          setProfile(null);
+        }
+      }
+    );
+
+    // Then check for existing session
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      
+      if (currentSession?.user) {
+        await fetchUserProfile(currentSession.user.id);
+      }
+      
+      setIsLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      if (data) {
+        setProfile({
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          role: data.role as UserRole,
+          phone: data.phone,
+          photoUrl: null // We'll add this feature later
+        });
+      }
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      // Mock login API call - in a real app, this would be a real API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, we're creating a mock user based on the email
-      // In a real app, the role would come from the backend
-      let role: UserRole = null;
-      if (email.includes('farmer')) {
-        role = 'farmer';
-      } else if (email.includes('land')) {
-        role = 'landowner';
-      } else if (email.includes('corp')) {
-        role = 'corporate';
-      } else {
-        // Default role for demo purposes
-        role = 'farmer';
-      }
-      
-      const mockUser: User = {
-        id: `user-${Date.now()}`,
-        name: email.split('@')[0],
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        role
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${mockUser.name}!`,
+        password
       });
       
-      // Redirect based on role
-      navigate('/dashboard');
-    } catch (error) {
+      if (error) throw error;
+      
+      if (data.user) {
+        await fetchUserProfile(data.user.id);
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome back!`,
+        });
+        
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "Invalid email or password.",
+        description: error.message || "Invalid email or password.",
       });
     } finally {
       setIsLoading(false);
@@ -93,31 +135,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (name: string, email: string, password: string, role: UserRole) => {
     try {
       setIsLoading(true);
-      // Mock register API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const mockUser: User = {
-        id: `user-${Date.now()}`,
-        name,
+      // Register the user with Supabase
+      const { data, error } = await supabase.auth.signUp({
         email,
-        role
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      
-      toast({
-        title: "Registration successful",
-        description: "Your account has been created.",
+        password,
+        options: {
+          data: {
+            name,
+            role
+          }
+        }
       });
       
-      // Redirect to dashboard
-      navigate('/dashboard');
-    } catch (error) {
+      if (error) throw error;
+      
+      if (data.user) {
+        // The trigger we created in the database will handle creating the user profile
+        toast({
+          title: "Registration successful",
+          description: "Your account has been created.",
+        });
+        
+        // In a real app, you might want to wait for email confirmation here
+        // But for the demo, we'll just redirect to the dashboard
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Registration failed",
-        description: "Failed to create account. Please try again.",
+        description: error.message || "Failed to create account. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -127,35 +175,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loginWithGoogle = async () => {
     try {
       setIsLoading(true);
-      // Simulate Google login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // In a real app, this would use the Google Identity Services SDK
-      // For demo purposes, we'll create a mock user
-      const mockGoogleUser: User = {
-        id: `google-user-${Date.now()}`,
-        name: "Google User",
-        email: "googleuser@gmail.com",
-        role: 'farmer', // Default role
-        photoUrl: "https://lh3.googleusercontent.com/a/default-user=s120"
-      };
       
-      setUser(mockGoogleUser);
-      localStorage.setItem('user', JSON.stringify(mockGoogleUser));
-      
-      toast({
-        title: "Google login successful",
-        description: `Welcome, ${mockGoogleUser.name}!`,
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
       });
       
-      navigate('/dashboard');
-    } catch (error) {
+      if (error) throw error;
+      
+      // The redirect happens automatically, so we don't need to do anything else here
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Google login failed",
-        description: "Failed to log in with Google. Please try again.",
+        description: error.message || "Failed to log in with Google. Please try again.",
       });
-    } finally {
       setIsLoading(false);
     }
   };
@@ -163,53 +199,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signupWithGoogle = async (role: UserRole) => {
     try {
       setIsLoading(true);
-      // Simulate Google signup
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // In a real app, this would use the Google Identity Services SDK
-      // For demo purposes, we'll create a mock user with the provided role
-      const mockGoogleUser: User = {
-        id: `google-user-${Date.now()}`,
-        name: "Google User",
-        email: "googleuser@gmail.com",
-        role: role,
-        photoUrl: "https://lh3.googleusercontent.com/a/default-user=s120"
-      };
       
-      setUser(mockGoogleUser);
-      localStorage.setItem('user', JSON.stringify(mockGoogleUser));
+      // For Google sign-up, we'll use the same OAuth flow but store the desired role in localStorage
+      // We'll set it in the user metadata after the OAuth flow completes
+      localStorage.setItem('signup_role', role || 'farmer');
       
-      toast({
-        title: "Google signup successful",
-        description: `Welcome to AgriLink, ${mockGoogleUser.name}!`,
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
       });
       
-      navigate('/dashboard');
-    } catch (error) {
+      if (error) throw error;
+      
+      // The redirect happens automatically
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Google signup failed",
-        description: "Failed to sign up with Google. Please try again.",
+        description: error.message || "Failed to sign up with Google. Please try again.",
       });
-    } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    toast({
-      title: "Logged out",
-      description: "You have been logged out successfully.",
-    });
-    navigate('/');
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully.",
+      });
+      
+      navigate('/');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Logout failed",
+        description: error.message || "Failed to log out. Please try again.",
+      });
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        profile,
         isAuthenticated: !!user,
         isLoading,
         login,
