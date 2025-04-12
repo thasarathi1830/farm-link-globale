@@ -96,6 +96,42 @@ export type Database = {
           },
         ]
       }
+      job_applications: {
+        Row: {
+          created_at: string
+          email: string
+          farmer_id: number
+          file_url: string | null
+          id: string
+          job_id: number
+          message: string | null
+          name: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          farmer_id: number
+          file_url?: string | null
+          id?: string
+          job_id: number
+          message?: string | null
+          name: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          farmer_id?: number
+          file_url?: string | null
+          id?: string
+          job_id?: number
+          message?: string | null
+          name?: string
+          status?: string
+        }
+        Relationships: []
+      }
       land_listings: {
         Row: {
           available_from: string | null
@@ -194,6 +230,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_jobs: {
+        Row: {
+          company_name: string
+          farmer_id: number
+          id: string
+          job_id: number
+          saved_at: string
+          title: string
+        }
+        Insert: {
+          company_name: string
+          farmer_id: number
+          id?: string
+          job_id: number
+          saved_at?: string
+          title: string
+        }
+        Update: {
+          company_name?: string
+          farmer_id?: number
+          id?: string
+          job_id?: number
+          saved_at?: string
+          title?: string
+        }
+        Relationships: []
       }
       users: {
         Row: {
