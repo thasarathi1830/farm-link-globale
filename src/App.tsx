@@ -11,7 +11,7 @@ import Dashboard from "@/pages/Dashboard";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import { AuthProvider } from "@/hooks/auth/AuthProvider";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const queryClient = new QueryClient();
 

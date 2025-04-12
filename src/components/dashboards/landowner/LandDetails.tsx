@@ -4,27 +4,110 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Edit } from 'lucide-react';
+import { MapPin, Edit, Image, FileText, Download } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious 
+} from '@/components/ui/carousel';
+import LandImageUploader from './LandImageUploader';
 
 const LandDetails = () => {
   const { toast } = useToast();
   const [isEditingLand, setIsEditingLand] = useState(false);
+  const [isImageUploaderOpen, setIsImageUploaderOpen] = useState(false);
+  const [landImages, setLandImages] = useState<string[]>([]);
   const [landDetails, setLandDetails] = useState({
+    id: "1",
     size: "5",
     type: "agricultural",
     soil: "Red Loamy",
     water: "Borewell, Canal",
     location: "Kolar District, Karnataka",
-    cropHistory: "Rice, Maize, Vegetables"
+    cropHistory: "Rice, Maize, Vegetables",
+    description: "Well-maintained field with irrigation facilities, suitable for multiple crops."
   });
 
   const handleLandDetailsUpdate = () => {
     setIsEditingLand(false);
+    
+    // In a real implementation, you would update Supabase here
+    // Example:
+    /*
+    const { error } = await supabase
+      .from('lands')
+      .update({
+        size: landDetails.size,
+        type: landDetails.type,
+        soil_type: landDetails.soil,
+        water_source: landDetails.water,
+        location: landDetails.location,
+        crop_history: landDetails.cropHistory,
+        description: landDetails.description
+      })
+      .eq('id', landDetails.id);
+      
+    if (error) {
+      console.error('Error updating land:', error);
+      toast({
+        title: "Update Failed",
+        description: "Could not update land details. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+    */
+    
     toast({
       title: "Land details updated",
       description: "Your land details have been updated successfully.",
+    });
+  };
+
+  const handleImagesUploaded = (newImages: string[]) => {
+    setLandImages([...landImages, ...newImages]);
+    
+    // In a real implementation, you would update Supabase here
+    // Example:
+    /*
+    async function updateLandImages() {
+      const { error } = await supabase
+        .from('land_images')
+        .insert(
+          newImages.map(url => ({
+            land_id: landDetails.id,
+            image_url: url,
+            uploaded_at: new Date()
+          }))
+        );
+        
+      if (error) {
+        console.error('Error saving image references:', error);
+      }
+    }
+    
+    updateLandImages();
+    */
+  };
+
+  const handleDocumentUpload = () => {
+    // This would open a document uploader similar to the image uploader
+    toast({
+      title: "Coming Soon",
+      description: "Document upload functionality will be available soon.",
+    });
+  };
+
+  const handleDownloadReport = () => {
+    // In a real implementation, this would generate a report
+    toast({
+      title: "Coming Soon",
+      description: "Report generation functionality will be available soon.",
     });
   };
 
@@ -70,7 +153,7 @@ const LandDetails = () => {
                                             landDetails.type === "orchard" ? "Orchard" : "Mixed Use"}</p>
               </div>
             </div>
-            <p className="mt-2">Well-maintained field with irrigation facilities, suitable for multiple crops.</p>
+            <p className="mt-2">{landDetails.description}</p>
           </div>
         ) : (
           <div className="space-y-4 mb-4">
@@ -131,6 +214,15 @@ const LandDetails = () => {
                   onChange={(e) => setLandDetails({...landDetails, cropHistory: e.target.value})}
                 />
               </div>
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea 
+                  id="description" 
+                  value={landDetails.description} 
+                  onChange={(e) => setLandDetails({...landDetails, description: e.target.value})}
+                  rows={3}
+                />
+              </div>
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsEditingLand(false)}>Cancel</Button>
@@ -140,12 +232,55 @@ const LandDetails = () => {
         )}
         
         {!isEditingLand && (
-          <div className="flex gap-2">
-            <Button size="sm">View Map</Button>
-            <Button size="sm" variant="outline">View Inquiries (4)</Button>
-          </div>
+          <>
+            {landImages.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium mb-2">Land Images</h3>
+                <Carousel className="max-w-full">
+                  <CarouselContent>
+                    {landImages.map((image, index) => (
+                      <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3">
+                        <div className="p-1">
+                          <div className="aspect-square overflow-hidden rounded-md border">
+                            <img 
+                              src={image} 
+                              alt={`Land image ${index + 1}`} 
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="absolute left-2" />
+                  <CarouselNext className="absolute right-2" />
+                </Carousel>
+              </div>
+            )}
+            
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" onClick={() => setIsImageUploaderOpen(true)}>
+                <Image className="h-4 w-4 mr-1" /> Upload Images
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleDocumentUpload}>
+                <FileText className="h-4 w-4 mr-1" /> Upload Documents
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleDownloadReport}>
+                <Download className="h-4 w-4 mr-1" /> Download Report
+              </Button>
+              <Button size="sm" variant="outline">View Map</Button>
+              <Button size="sm" variant="outline">View Inquiries (4)</Button>
+            </div>
+          </>
         )}
       </CardContent>
+      
+      <LandImageUploader 
+        landId={landDetails.id}
+        open={isImageUploaderOpen}
+        onOpenChange={setIsImageUploaderOpen}
+        onImagesUploaded={handleImagesUploaded}
+      />
     </Card>
   );
 };

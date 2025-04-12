@@ -1,10 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BarChart4, Briefcase } from 'lucide-react';
+import RevenueReportsModal from './RevenueReportsModal';
 
 const RevenueTrackingSection = () => {
+  const [reportsModalOpen, setReportsModalOpen] = useState(false);
+
   return (
     <Card>
       <CardHeader>
@@ -31,9 +34,14 @@ const RevenueTrackingSection = () => {
           </div>
         </div>
         
-        <Button size="sm" variant="outline" className="w-full mt-4">
+        <Button size="sm" variant="outline" className="w-full mt-4" onClick={() => setReportsModalOpen(true)}>
           <BarChart4 className="mr-2 h-4 w-4" /> Detailed Reports
         </Button>
+
+        <RevenueReportsModal 
+          open={reportsModalOpen} 
+          onOpenChange={setReportsModalOpen} 
+        />
       </CardContent>
     </Card>
   );
