@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Dialog, 
@@ -25,7 +24,7 @@ interface ProjectMilestone {
   id: string;
   title: string;
   dueDate: string;
-  status: 'pending' | 'completed' | 'overdue';
+  status: 'pending' | 'completed' | 'overdue' | 'in-progress';
 }
 
 interface Project {
@@ -64,16 +63,6 @@ const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ isOpen, onClo
     setError(null);
 
     try {
-      // In a real implementation, we would fetch from Supabase
-      // const { data, error } = await supabase
-      //   .from('projects')
-      //   .select('*')
-      //   .eq('id', id)
-      //   .single();
-      
-      // if (error) throw error;
-      // setProject(data);
-
       // For now, let's use mock data
       setTimeout(() => {
         setProject({

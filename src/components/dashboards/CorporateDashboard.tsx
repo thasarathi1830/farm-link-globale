@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, Building, FileSpreadsheet, Users, Calendar, DollarSign, Clock } from 'lucide-react';
+import { BarChart3, Building, FileSpreadsheet, Users, Calendar, DollarSign, Clock, AreaChart } from 'lucide-react';
 import { useAuth } from '@/hooks/auth';
 import ProjectDetailsModal from './corporate/ProjectDetailsModal';
 import TeamManagementModal from './corporate/TeamManagementModal';
 import AgreementViewerModal from './corporate/AgreementViewerModal';
+import ResourceAnalysisModal from './corporate/ResourceAnalysisModal';
+import FinancialReportModal from './corporate/FinancialReportModal';
 import { Badge } from '@/components/ui/badge';
 
 // Mock data for the dashboard
@@ -90,6 +92,8 @@ const CorporateDashboard = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [isAgreementModalOpen, setIsAgreementModalOpen] = useState(false);
+  const [isResourceAnalysisModalOpen, setIsResourceAnalysisModalOpen] = useState(false);
+  const [isFinancialReportModalOpen, setIsFinancialReportModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedAgreementId, setSelectedAgreementId] = useState<string | null>(null);
@@ -108,6 +112,14 @@ const CorporateDashboard = () => {
   const openAgreementViewer = (agreementId: string) => {
     setSelectedAgreementId(agreementId);
     setIsAgreementModalOpen(true);
+  };
+
+  const openResourceAnalysis = () => {
+    setIsResourceAnalysisModalOpen(true);
+  };
+
+  const openFinancialReport = () => {
+    setIsFinancialReportModalOpen(true);
   };
 
   // Helper function for status badges
@@ -248,14 +260,34 @@ const CorporateDashboard = () => {
         <TabsContent value="financials" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Financial Reports</CardTitle>
+              <CardTitle className="flex items-center">
+                <DollarSign className="mr-2 h-5 w-5" />
+                Financial Reports
+              </CardTitle>
               <CardDescription>Track budget utilization and revenue generation.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Financial reports and analytics will be displayed here.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="border rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-muted-foreground">Total Budget</p>
+                  <p className="text-2xl font-medium">$1,500,000</p>
+                </div>
+                <div className="border rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-muted-foreground">Utilized</p>
+                  <p className="text-2xl font-medium">$1,250,000</p>
+                </div>
+                <div className="border rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-muted-foreground">Revenue</p>
+                  <p className="text-2xl font-medium">$1,850,000</p>
+                </div>
+              </div>
+              <p>Access comprehensive financial reports and analytics.</p>
             </CardContent>
             <CardFooter>
-              <Button>Generate Report</Button>
+              <Button onClick={openFinancialReport}>
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Generate Report
+              </Button>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -264,14 +296,42 @@ const CorporateDashboard = () => {
         <TabsContent value="resources" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Resource Analysis</CardTitle>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="mr-2 h-5 w-5" />
+                Resource Analysis
+              </CardTitle>
               <CardDescription>Analyze resource consumption and efficiency.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>Resource analysis tools and insights will be here.</p>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="border rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-muted-foreground">Equipment</p>
+                  <p className="text-2xl font-medium">48 units</p>
+                  <p className="text-xs text-yellow-500">67% Utilized</p>
+                </div>
+                <div className="border rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-muted-foreground">Manpower</p>
+                  <p className="text-2xl font-medium">120 staff</p>
+                  <p className="text-xs text-red-500">79% Allocated</p>
+                </div>
+                <div className="border rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-muted-foreground">Supplies</p>
+                  <p className="text-2xl font-medium">5,000 units</p>
+                  <p className="text-xs text-green-500">56% Utilized</p>
+                </div>
+                <div className="border rounded-lg p-4 shadow-sm">
+                  <p className="text-sm text-muted-foreground">Water</p>
+                  <p className="text-2xl font-medium">150K gal</p>
+                  <p className="text-xs text-yellow-500">65% Used</p>
+                </div>
+              </div>
+              <p>Access detailed resource analysis tools and insights.</p>
             </CardContent>
             <CardFooter>
-              <Button>Analyze Resources</Button>
+              <Button onClick={openResourceAnalysis}>
+                <AreaChart className="mr-2 h-4 w-4" />
+                Analyze Resources
+              </Button>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -294,6 +354,16 @@ const CorporateDashboard = () => {
         isOpen={isAgreementModalOpen} 
         onClose={() => setIsAgreementModalOpen(false)} 
         agreementId={selectedAgreementId}
+      />
+
+      <ResourceAnalysisModal
+        isOpen={isResourceAnalysisModalOpen}
+        onClose={() => setIsResourceAnalysisModalOpen(false)}
+      />
+
+      <FinancialReportModal
+        isOpen={isFinancialReportModalOpen}
+        onClose={() => setIsFinancialReportModalOpen(false)}
       />
     </div>
   );
