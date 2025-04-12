@@ -20,6 +20,32 @@ interface JobPosting {
   applicant_count: number;
 }
 
+// Sample job postings data - this would normally come from your database
+const SAMPLE_JOB_POSTINGS: JobPosting[] = [
+  {
+    id: 1,
+    title: 'Farm Workers Needed for Harvest Season',
+    location: 'Bangalore Rural',
+    workers_needed: 5,
+    salary_range: '₹500-600/day',
+    duration: '3 weeks',
+    start_date: '2025-05-15',
+    description: 'Looking for experienced farm workers for the upcoming harvest season. Work includes harvesting crops, operating basic equipment, and packaging produce.',
+    applicant_count: 3
+  },
+  {
+    id: 2,
+    title: 'Seasonal Rice Field Workers',
+    location: 'Mysore District',
+    workers_needed: 8,
+    salary_range: '₹450-550/day',
+    duration: '1 month',
+    start_date: '2025-06-01',
+    description: 'Rice field workers needed for planting season. Experience in paddy field work preferred. Accommodation can be provided for workers from distant locations.',
+    applicant_count: 0
+  }
+];
+
 const JobPostings = () => {
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,27 +56,36 @@ const JobPostings = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchJobPostings();
+    // For now, we'll use the sample data
+    // In a real implementation, you would fetch from your database
+    setJobPostings(SAMPLE_JOB_POSTINGS);
+    setIsLoading(false);
   }, []);
 
+  // Mock function to simulate fetching job postings from database
   const fetchJobPostings = async () => {
     setIsLoading(true);
     try {
-      // Fetch job postings with applicant counts using a join or count query
-      const { data, error } = await supabase
-        .from('job_postings')
-        .select('*, applicant_count:job_applications(count)')
-        .order('created_at', { ascending: false });
+      // This would be replaced with actual API call once job_postings table exists
+      setTimeout(() => {
+        setJobPostings(SAMPLE_JOB_POSTINGS);
+        setIsLoading(false);
+      }, 500);
+      
+      // Once you have a job_postings table in your database, use this:
+      // const { data, error } = await supabase
+      //   .from('job_postings')
+      //   .select('*, applicant_count:job_applications(count)')
+      //   .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      // if (error) throw error;
       
-      // Transform the data to include applicant count
-      const formattedData = data?.map(job => ({
-        ...job,
-        applicant_count: job.applicant_count?.[0]?.count || 0
-      })) || [];
+      // const formattedData = data?.map(job => ({
+      //   ...job,
+      //   applicant_count: job.applicant_count?.[0]?.count || 0
+      // })) || [];
       
-      setJobPostings(formattedData);
+      // setJobPostings(formattedData);
     } catch (error) {
       console.error('Error fetching job postings:', error);
       toast({

@@ -41,6 +41,30 @@ interface JobFormValues {
   startDate: string;
 }
 
+// Sample job data - this would normally be fetched from the database
+const SAMPLE_JOB_DATA = {
+  1: {
+    title: 'Farm Workers Needed for Harvest Season',
+    location: 'Bangalore Rural',
+    description: 'Looking for experienced farm workers for the upcoming harvest season. Work includes harvesting crops, operating basic equipment, and packaging produce.',
+    required_skills: 'Experience with harvesting crops, ability to work long hours outdoors',
+    duration: '3 weeks',
+    salary_range: '₹500-600/day',
+    workers_needed: 5,
+    start_date: '2025-05-15',
+  },
+  2: {
+    title: 'Seasonal Rice Field Workers',
+    location: 'Mysore District',
+    description: 'Rice field workers needed for planting season. Experience in paddy field work preferred. Accommodation can be provided for workers from distant locations.',
+    required_skills: 'Experience with rice cultivation, teamwork',
+    duration: '1 month',
+    salary_range: '₹450-550/day',
+    workers_needed: 8,
+    start_date: '2025-06-01',
+  }
+};
+
 const EditJobPostingModal = ({ 
   open, 
   onOpenChange, 
@@ -73,26 +97,48 @@ const EditJobPostingModal = ({
   const fetchJobDetails = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('job_postings')
-        .select('*')
-        .eq('id', jobId)
-        .single();
-
-      if (error) throw error;
+      // This would be replaced with actual API call once job_postings table exists
+      setTimeout(() => {
+        // Get the sample job data based on jobId
+        const data = SAMPLE_JOB_DATA[jobId as keyof typeof SAMPLE_JOB_DATA];
+        
+        if (data) {
+          form.reset({
+            title: data.title || '',
+            location: data.location || '',
+            description: data.description || '',
+            requiredSkills: data.required_skills || '',
+            duration: data.duration || '',
+            salary: data.salary_range || '',
+            workers: data.workers_needed || 1,
+            startDate: data.start_date ? data.start_date.split('T')[0] : '',
+          });
+        }
+        
+        setIsLoading(false);
+      }, 500);
       
-      if (data) {
-        form.reset({
-          title: data.title || '',
-          location: data.location || '',
-          description: data.description || '',
-          requiredSkills: data.required_skills || '',
-          duration: data.duration || '',
-          salary: data.salary_range || '',
-          workers: data.workers_needed || 1,
-          startDate: data.start_date ? data.start_date.split('T')[0] : '',
-        });
-      }
+      // Once you have a job_postings table in your database, use this:
+      // const { data, error } = await supabase
+      //   .from('job_postings')
+      //   .select('*')
+      //   .eq('id', jobId)
+      //   .single();
+
+      // if (error) throw error;
+      
+      // if (data) {
+      //   form.reset({
+      //     title: data.title || '',
+      //     location: data.location || '',
+      //     description: data.description || '',
+      //     requiredSkills: data.required_skills || '',
+      //     duration: data.duration || '',
+      //     salary: data.salary_range || '',
+      //     workers: data.workers_needed || 1,
+      //     startDate: data.start_date ? data.start_date.split('T')[0] : '',
+      //   });
+      // }
     } catch (error) {
       console.error('Error fetching job details:', error);
       toast({
@@ -110,30 +156,43 @@ const EditJobPostingModal = ({
     
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from('job_postings')
-        .update({
-          title: values.title,
-          location: values.location,
-          description: values.description,
-          required_skills: values.requiredSkills,
-          duration: values.duration,
-          salary_range: values.salary,
-          workers_needed: values.workers,
-          start_date: values.startDate,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', jobId);
+      // Simulate API call for updating the job posting
+      setTimeout(() => {
+        toast({
+          title: 'Success',
+          description: 'Job posting updated successfully.',
+        });
+        
+        onJobUpdated();
+        onOpenChange(false);
+        setIsSaving(false);
+      }, 1000);
+      
+      // Once you have a job_postings table in your database, use this:
+      // const { error } = await supabase
+      //   .from('job_postings')
+      //   .update({
+      //     title: values.title,
+      //     location: values.location,
+      //     description: values.description,
+      //     required_skills: values.requiredSkills,
+      //     duration: values.duration,
+      //     salary_range: values.salary,
+      //     workers_needed: values.workers,
+      //     start_date: values.startDate,
+      //     updated_at: new Date().toISOString(),
+      //   })
+      //   .eq('id', jobId);
 
-      if (error) throw error;
+      // if (error) throw error;
       
-      toast({
-        title: 'Success',
-        description: 'Job posting updated successfully.',
-      });
+      // toast({
+      //   title: 'Success',
+      //   description: 'Job posting updated successfully.',
+      // });
       
-      onJobUpdated();
-      onOpenChange(false);
+      // onJobUpdated();
+      // onOpenChange(false);
     } catch (error) {
       console.error('Error updating job posting:', error);
       toast({

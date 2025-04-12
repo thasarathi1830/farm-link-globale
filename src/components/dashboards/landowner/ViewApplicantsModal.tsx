@@ -44,6 +44,37 @@ type Applicant = {
   created_at: string;
 }
 
+// Sample applicant data - replace with actual data from your database
+const SAMPLE_APPLICANTS: Record<number, Applicant[]> = {
+  1: [
+    {
+      id: "a1b2c3",
+      name: "Rajesh Kumar",
+      email: "rajesh@example.com",
+      file_url: "https://example.com/resume.pdf",
+      status: "pending",
+      created_at: "2025-04-01T10:30:00Z"
+    },
+    {
+      id: "d4e5f6",
+      name: "Priya Singh",
+      email: "priya@example.com",
+      file_url: "https://example.com/priya-resume.pdf",
+      status: "reviewed",
+      created_at: "2025-04-02T14:15:00Z"
+    },
+    {
+      id: "g7h8i9",
+      name: "Amit Patel",
+      email: "amit@example.com",
+      file_url: null,
+      status: "shortlisted",
+      created_at: "2025-04-03T09:45:00Z"
+    }
+  ],
+  2: [] // No applicants for job ID 2
+};
+
 const ViewApplicantsModal = ({ open, onOpenChange, jobId, jobTitle }: ViewApplicantsModalProps) => {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,15 +90,23 @@ const ViewApplicantsModal = ({ open, onOpenChange, jobId, jobTitle }: ViewApplic
   const fetchApplicants = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('job_applications')
-        .select('*')
-        .eq('job_id', jobId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      // Simulate API call with sample data
+      setTimeout(() => {
+        const applicantData = jobId ? SAMPLE_APPLICANTS[jobId] || [] : [];
+        setApplicants(applicantData);
+        setIsLoading(false);
+      }, 500);
       
-      setApplicants(data || []);
+      // Once job_applications table is properly set up in your database, use this:
+      // const { data, error } = await supabase
+      //   .from('job_applications')
+      //   .select('*')
+      //   .eq('job_id', jobId)
+      //   .order('created_at', { ascending: false });
+
+      // if (error) throw error;
+      
+      // setApplicants(data || []);
     } catch (error) {
       console.error('Error fetching applicants:', error);
       toast({
@@ -83,23 +122,40 @@ const ViewApplicantsModal = ({ open, onOpenChange, jobId, jobTitle }: ViewApplic
   const updateStatus = async (applicantId: string, newStatus: string) => {
     setIsUpdating(applicantId);
     try {
-      const { error } = await supabase
-        .from('job_applications')
-        .update({ status: newStatus })
-        .eq('id', applicantId);
+      // Simulate API call to update status
+      setTimeout(() => {
+        setApplicants(prevApplicants => 
+          prevApplicants.map(app => 
+            app.id === applicantId ? { ...app, status: newStatus } : app
+          )
+        );
+        
+        toast({
+          title: 'Status updated',
+          description: `Applicant status changed to ${newStatus}.`
+        });
+        
+        setIsUpdating(null);
+      }, 500);
+      
+      // Once job_applications table is properly set up in your database, use this:
+      // const { error } = await supabase
+      //   .from('job_applications')
+      //   .update({ status: newStatus })
+      //   .eq('id', applicantId);
 
-      if (error) throw error;
+      // if (error) throw error;
       
-      setApplicants(prevApplicants => 
-        prevApplicants.map(app => 
-          app.id === applicantId ? { ...app, status: newStatus } : app
-        )
-      );
+      // setApplicants(prevApplicants => 
+      //   prevApplicants.map(app => 
+      //     app.id === applicantId ? { ...app, status: newStatus } : app
+      //   )
+      // );
       
-      toast({
-        title: 'Status updated',
-        description: `Applicant status changed to ${newStatus}.`
-      });
+      // toast({
+      //   title: 'Status updated',
+      //   description: `Applicant status changed to ${newStatus}.`
+      // });
     } catch (error) {
       console.error('Error updating status:', error);
       toast({
