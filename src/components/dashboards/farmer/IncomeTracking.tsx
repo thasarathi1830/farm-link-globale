@@ -1,10 +1,21 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Briefcase } from 'lucide-react';
+import WorkHistoryModal from './WorkHistoryModal';
 
 const IncomeTracking = () => {
+  const [isWorkHistoryOpen, setIsWorkHistoryOpen] = useState(false);
+
+  const openWorkHistory = () => {
+    setIsWorkHistoryOpen(true);
+  };
+
+  const closeWorkHistory = () => {
+    setIsWorkHistoryOpen(false);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -31,9 +42,21 @@ const IncomeTracking = () => {
           </div>
         </div>
         
-        <Button size="sm" variant="outline" className="w-full mt-4">
+        <Button 
+          size="sm" 
+          variant="outline" 
+          className="w-full mt-4"
+          onClick={openWorkHistory}
+        >
           <Briefcase className="mr-2 h-4 w-4" /> View Work History
         </Button>
+        
+        {/* Work History Modal */}
+        <WorkHistoryModal 
+          isOpen={isWorkHistoryOpen} 
+          onClose={closeWorkHistory} 
+          farmerId="1" // In a real app, this would be the actual farmer ID
+        />
       </CardContent>
     </Card>
   );
