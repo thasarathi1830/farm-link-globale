@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/auth';
@@ -14,7 +13,7 @@ import RevenueTrackingSection from './landowner/RevenueTrackingSection';
 import LandAnalyticsSection from './landowner/LandAnalyticsSection';
 
 const LandownerDashboard = () => {
-  const { profile } = useAuth();
+  const { user } = useAuth();
   
   return (
     <Tabs>
@@ -30,7 +29,7 @@ const LandownerDashboard = () => {
         <TabsTrigger value="land-analytics">Land Analytics</TabsTrigger>
       </TabsList>
       <TabsContent value="dashboard">
-        <DashboardHeader name={profile?.name || 'Landowner'} />
+        <DashboardHeader />
         <DashboardStats />
       </TabsContent>
       <TabsContent value="land-parcels">
