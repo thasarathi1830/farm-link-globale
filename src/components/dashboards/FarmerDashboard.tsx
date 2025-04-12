@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/auth';
@@ -18,7 +19,7 @@ const FarmerDashboard = () => {
     <div className="container py-10">
       <DashboardHeader name={profile?.name || 'Farmer'} />
 
-      <Tabs defaultvalue="profile" className="w-full space-y-4">
+      <Tabs defaultValue="profile" className="w-full space-y-4">
         <TabsList>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="availability">Availability</TabsTrigger>

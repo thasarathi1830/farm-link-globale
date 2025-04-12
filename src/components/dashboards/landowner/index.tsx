@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/auth';
@@ -19,7 +20,7 @@ const LandownerDashboard = () => {
       <DashboardHeader name={profile?.name || 'Landowner'} />
       <DashboardStats />
 
-      <Tabs defaultvalue="landParcels" className="w-full mt-6">
+      <Tabs defaultValue="landParcels" className="w-full mt-6">
         <TabsList>
           <TabsTrigger value="landParcels">Land Parcels</TabsTrigger>
           <TabsTrigger value="landDetails">Land Details</TabsTrigger>
